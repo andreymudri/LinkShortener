@@ -26,10 +26,12 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.urls (
     id integer NOT NULL,
-    userid integer,
-    shorturl text NOT NULL,
-    url text NOT NULL,
-    visitcount integer DEFAULT 0
+    user_email character varying(255) NOT NULL,
+    link character varying(255) NOT NULL,
+    short_link character varying(255) NOT NULL,
+    views integer DEFAULT 0 NOT NULL,
+    "createdAt" timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -59,9 +61,11 @@ ALTER SEQUENCE public.urls_id_seq OWNED BY public.urls.id;
 
 CREATE TABLE public.users (
     id integer NOT NULL,
-    name text NOT NULL,
-    email text NOT NULL,
-    password text NOT NULL
+    name character varying(50) NOT NULL,
+    email character varying(50) NOT NULL,
+    password character varying(250) NOT NULL,
+    "createdAt" timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_login timestamp without time zone
 );
 
 
@@ -103,29 +107,29 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: urls; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.urls VALUES (5, 'andrey@andrey.com', 'http://www.google.com/', 'Xg78GTzZ', 0, '2023-05-20 03:41:51.67765', '2023-05-20 03:41:51.67765');
 
 
 --
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.users VALUES (4, 'andrey', 'andrey@andrey.com', '$2b$10$UZtIsj27IsNW4q0MX0GPxeTdi/O4Y0LW2Foc/RxRdmmLTqg9mGSDq');
-INSERT INTO public.users VALUES (5, 'teste', 'teste@teste.com', '$2b$10$BwPeC9kke2uPISYHU3CZTOKDc3XcO3C2xLemCYX2ureQH/Mb8sTY.');
-INSERT INTO public.users VALUES (6, 'test1', 'test1@test1.com', '$2b$10$5/LDLxmkORSJah8EjLhtyeCbruX98HN/htWUPJIS.6EdRXPy9XEpi');
+INSERT INTO public.users VALUES (1, 'test1', 'test1@test1.com', '$2b$10$lA4wFXu1y4GgNvk5PyOgEe/u68rAQ8ZwPvjT9MuITvpuuV67xJe7a', '2023-05-20 03:17:34.651983', NULL);
+INSERT INTO public.users VALUES (2, 'andrey', 'andrey@andrey.com', '$2b$10$nB0HUsTeIlHlgsgZX4sQS.uiUV2GFKg8W3yQ3qG.fjf8r0PYbqcmi', '2023-05-20 03:17:57.526648', NULL);
 
 
 --
 -- Name: urls_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.urls_id_seq', 1, true);
+SELECT pg_catalog.setval('public.urls_id_seq', 5, true);
 
 
 --
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 6, true);
+SELECT pg_catalog.setval('public.users_id_seq', 2, true);
 
 
 --
@@ -137,19 +141,19 @@ ALTER TABLE ONLY public.urls
 
 
 --
--- Name: urls urls_shorturl_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.urls
-    ADD CONSTRAINT urls_shorturl_key UNIQUE (shorturl);
-
-
---
 -- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_email_key UNIQUE (email);
+
+
+--
+-- Name: users users_name_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_name_key UNIQUE (name);
 
 
 --
@@ -161,11 +165,11 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: urls urls_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: urls urls_user_email_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.urls
-    ADD CONSTRAINT urls_userid_fkey FOREIGN KEY (userid) REFERENCES public.users(id);
+    ADD CONSTRAINT urls_user_email_fkey FOREIGN KEY (user_email) REFERENCES public.users(email);
 
 
 --

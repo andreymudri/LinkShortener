@@ -1,20 +1,23 @@
 import { nanoid } from "nanoid";
+import db from "../config/db.js";
 
 export async function postUrlShortener(req, res) {
   try {
-    const userId = req.user.id;
+    const userEmail = req.user.email;
+    console.log(userEmail);
     const { url } = req.body;
     console.log(url);
-    const shortUrl = nanoid();
-    const result = await pool.query(
-      "INSERT INTO urls (userid, shorturl, url) VALUES ($1, $2, $3) RETURNING id",
-      [userId, shortUrl, url]
+    const shortUrl = nanoid(8);
+    console.log(shortUrl);
+    const result = await db.query(
+      "INSERT INTO urls (user_email, link, short_link) VALUES ($1, $2, $3) RETURNING id",
+      [userEmail, url, shortUrl]
     );
     const newUrl = {
       id: result.rows[0].id,
-      shortUrl,
       url,
-      userId,
+      shortUrl,
+      userEmail,
     };
 
     res.status(201).json({ id: newUrl.id, shortUrl });
@@ -48,10 +51,9 @@ export async function getShortUrl(req, res) {
     if (result.rows.length === 0) {
       return res.status(404).send({ error: "URL not found" });
     }
-    await pool.query(
-        'UPDATE urls SET visits = visits + 1 WHERE id = $1',
-        [url.id]
-    );
+    await pool.query("UPDATE urls SET visits = visits + 1 WHERE id = $1", [
+      url.id,
+    ]);
     res.redirect(url.original_url);
   } catch (err) {
     console.log(err);
