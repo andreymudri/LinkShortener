@@ -30,7 +30,8 @@ export async function postUrlShortener(req, res) {
 export async function getUrlbyID(req, res) {
   try {
     const { id } = req.params;
-    const result = await pool.query("SELECT * FROM urls WHERE id = $1", [id]);
+    console.log(id);
+    const result = await db.query("SELECT * FROM urls WHERE id = $1", [id]);
     if (result.rows.length === 0) {
       return res.status(404).send({ error: "URL not found" });
     }
@@ -45,16 +46,17 @@ export async function getShortUrl(req, res) {
   try {
     const { shortUrl } = req.params;
 
-    const result = await pool.query("SELECT * FROM urls WHERE short_url = $1", [
+    const result = await db.query("SELECT * FROM urls WHERE short_link = $1", [
       shortUrl,
     ]);
     if (result.rows.length === 0) {
       return res.status(404).send({ error: "URL not found" });
     }
-    await pool.query("UPDATE urls SET visits = visits + 1 WHERE id = $1", [
+    const url = result.rows[0];
+    await db.query("UPDATE urls SET views = views + 1 WHERE id = $1", [
       url.id,
     ]);
-    res.redirect(url.original_url);
+    res.redirect(url.link);
   } catch (err) {
     console.log(err);
     res.status(500).send(err);
