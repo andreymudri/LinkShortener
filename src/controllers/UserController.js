@@ -24,6 +24,9 @@ export async function GetUserME(req, res) {
       0
     );
 
+    visitCount = visitCount === null ? 0 : visitCount;
+
+
     res.status(200).send({
       id: user.rows[0].id,
       name: user.rows[0].name,
