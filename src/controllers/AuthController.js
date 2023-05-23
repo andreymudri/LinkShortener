@@ -2,6 +2,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../config/db.js";
 
+
+const key = process.env.JWT_SECRET || "super_secret_key";
 export async function signUp(req, res) {
   try {
     const { name, email, password } = req.body;
@@ -43,7 +45,7 @@ export async function signIn(req, res) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    const token = jwt.sign({ email }, process.env.JWT_SECRET);
+    const token = jwt.sign({ email }, key);
     return res.status(200).json({ token });
   } catch (err) {
     return res.status(500).json({ error: "Internal server error" });
