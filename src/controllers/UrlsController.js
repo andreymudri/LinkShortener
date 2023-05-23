@@ -60,3 +60,26 @@ export async function getShortUrl(req, res) {
     res.status(500).send(err);
   }
 }
+
+
+export async function deleteUrl(req, res) {
+  const urlId = req.params.id; // Obtém o ID da URL a ser excluída
+
+  try {
+    const result = await client.query(`SELECT user_email FROM urls WHERE id = $1`, [urlId]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'URL não encontrada.' });
+    }
+    const user_email = result.rows[0].user_email;
+    if (user_email !== req.user.email) {
+      return res.status(401).json({ error: 'Acesso não autorizado.' });
+    }
+    await client.query(`DELETE FROM urls WHERE id = $1`, [urlId]);
+
+    return res.status(204);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+};

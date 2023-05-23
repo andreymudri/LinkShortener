@@ -18,6 +18,6 @@ UrlRoute.post(
 );
 UrlRoute.get("/urls/:id", getUrlbyID);
 UrlRoute.get("/urls/open/:shortUrl", getShortUrl);
-UrlRoute.delete("/urls/:id", authenticateToken);
+UrlRoute.delete("/urls/:id", authenticateToken,deleteUrl);
 
 export default UrlRoute;
