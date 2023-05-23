@@ -13,7 +13,7 @@ export async function GetUserME(req, res) {
       );
     const shortenedUrls = await db.query(
       `
-        SELECT id, link, short_link, views
+        SELECT id, link as url, short_link, views
         FROM urls
         WHERE user_email = $1
       `,
