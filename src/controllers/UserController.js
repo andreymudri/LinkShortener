@@ -2,15 +2,15 @@ import db from "../config/db.js";
 
 export async function GetUserME(req, res) {
   try {
-      const userEmail = req.user.email;
-      const user = await db.query(
-        `
+    const userEmail = req.user.email;
+    const user = await db.query(
+      `
           SELECT id, name, email, "createdAt", last_login
           FROM users
           WHERE email = $1
         `,
-        [userEmail]
-      );
+      [userEmail]
+    );
     const shortenedUrls = await db.query(
       `
         SELECT id, link as url, short_link as "shortUrl", views as "visitCount"
@@ -19,13 +19,12 @@ export async function GetUserME(req, res) {
       `,
       [userEmail]
     );
-    const visitCount = shortenedUrls.rows.reduce(
+    let visitCount = shortenedUrls.rows.reduce(
       (sum, url) => sum + url.views,
       0
     );
 
     visitCount = visitCount === null ? 0 : visitCount;
-
 
     res.status(200).send({
       id: user.rows[0].id,
