@@ -30,8 +30,7 @@ export async function GetUserME(req, res) {
       id: user.rows[0].id,
       name: user.rows[0].name,
       email: user.rows[0].email,
-      lastLogin: user.rows[0]._login,
-      visitCount,
+      visitCount: visitCount,
       shortenedUrls: shortenedUrls.rows,
     });
   } catch (err) {
