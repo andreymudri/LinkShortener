@@ -20,10 +20,11 @@ export async function GetUserME(req, res) {
       [userEmail]
     );
     let visitCount = shortenedUrls.rows.reduce(
-      (sum, url) => sum + url.views,
+      (sum, url) => sum + url.visitCount,
       0
     );
-
+    console.log(visitCount);
+      console.log(shortenedUrls.rows)
     visitCount = visitCount === null ? 0 : visitCount;
 
     res.status(200).send({
