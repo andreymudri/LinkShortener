@@ -3,7 +3,7 @@ import db from "../config/db.js";
 export async function GetRanking(req, res) {
   try {
     const results = await db.query(`
-          SELECT users.id, users.name, COUNT(urls.id) AS linksCount, COALESCE(SUM(urls.views), 0) AS "visitCount"
+          SELECT users.id, users.name, COUNT(urls.id) AS linksCount, COALESCE(SUM(urls.views), 0) AS "linksCount"
           FROM users
           LEFT JOIN urls ON users.email = urls.user_email
           GROUP BY users.id
