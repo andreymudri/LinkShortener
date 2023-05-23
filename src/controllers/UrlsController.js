@@ -28,7 +28,8 @@ export async function postUrlShortener(req, res) {
 export async function getUrlbyID(req, res) {
   try {
     const { id } = req.params;
-    const result = await db.query("SELECT * FROM urls WHERE id = $1", [id]);
+    const result = await db.query(`SELECT id, link as url, short_link as "shortUrl", views FROM urls WHERE id = $1`, [id]);
+
     if (result.rows.length === 0) {
       return res.status(404).send({ error: "URL not found" });
     }
