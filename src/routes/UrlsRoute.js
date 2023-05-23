@@ -3,6 +3,7 @@ import { authenticateToken } from "../middlewares/AuthMiddleware.js";
 import validateRequestBody from "../middlewares/SchemaMiddleware.js";
 import { shortenUrlSchema } from "../schemas/UrlsSchema.js";
 import {
+  deleteUrl,
   getShortUrl,
   getUrlbyID,
   postUrlShortener,
@@ -18,6 +19,6 @@ UrlRoute.post(
 );
 UrlRoute.get("/urls/:id", getUrlbyID);
 UrlRoute.get("/urls/open/:shortUrl", getShortUrl);
-UrlRoute.delete("/urls/:id", authenticateToken,deleteUrl);
+UrlRoute.delete("/urls/:id", authenticateToken, deleteUrl);
 
 export default UrlRoute;
