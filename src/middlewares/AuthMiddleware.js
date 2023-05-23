@@ -12,7 +12,7 @@ export const authenticateToken = (req, res, next) => {
   jwt.verify(token, key, (err, user) => {
     if (err) {
       console.log(err);
-      return res.status(403).send("Could not verify token");
+      return res.status(401).send("Could not verify token");
     }
     req.user = user;
   });
