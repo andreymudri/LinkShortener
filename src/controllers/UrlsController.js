@@ -8,7 +8,7 @@ export async function postUrlShortener(req, res) {
 
     const shortUrl = nanoid(8);
     const result = await db.query(
-      "INSERT INTO urls (user_email, link, short_link) VALUES ($1, $2, $3) RETURNING id",
+      "INSERT INTO urls (user_email, link, short_link) VALUES ($1, $2, $3) RETURNING id;",
       [userEmail, url, shortUrl]
     );
     const newUrl = {
@@ -28,7 +28,7 @@ export async function postUrlShortener(req, res) {
 export async function getUrlbyID(req, res) {
   try {
     const { id } = req.params;
-    const result = await db.query(`SELECT id, link as url, short_link as "shortUrl", views FROM urls WHERE id = $1`, [id]);
+    const result = await db.query(`SELECT id, link as url, short_link as "shortUrl", views FROM urls WHERE id = $1;`, [id]);
 
     if (result.rows.length === 0) {
       return res.status(404).send({ error: "URL not found" });
@@ -44,14 +44,14 @@ export async function getShortUrl(req, res) {
   try {
     const { shortUrl } = req.params;
 
-    const result = await db.query("SELECT * FROM urls WHERE short_link = $1", [
+    const result = await db.query("SELECT * FROM urls WHERE short_link = $1;", [
       shortUrl,
     ]);
     if (result.rows.length === 0) {
       return res.status(404).send({ error: "URL not found" });
     }
     const url = result.rows[0];
-    await db.query("UPDATE urls SET views = views + 1 WHERE id = $1", [
+    await db.query("UPDATE urls SET views = views + 1 WHERE id = $1;", [
       url.id,
     ]);
     res.redirect(url.link);
@@ -63,10 +63,10 @@ export async function getShortUrl(req, res) {
 
 
 export async function deleteUrl(req, res) {
-  const urlId = req.params.id; // Obtém o ID da URL a ser excluída
+  const urlId = req.params.id;
 
   try {
-    const result = await client.query(`SELECT user_email FROM urls WHERE id = $1`, [urlId]);
+    const result = await db.query(`SELECT user_email FROM urls WHERE id = $1`, [urlId]);
 
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'URL não encontrada.' });
@@ -75,7 +75,7 @@ export async function deleteUrl(req, res) {
     if (user_email !== req.user.email) {
       return res.status(401).json({ error: 'Acesso não autorizado.' });
     }
-    await client.query(`DELETE FROM urls WHERE id = $1`, [urlId]);
+    await db.query(`DELETE FROM urls WHERE id = $1`, [urlId]);
 
     return res.status(204);
   } catch (error) {
